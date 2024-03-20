@@ -1,0 +1,5 @@
+/opt/clion-2023.3.4/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/opt/clion-2023.3.4/bin/ninja/linux/x64/ninja -G Ninja -S /home/mateja/Documents/RG/project_base -B /home/mateja/Documents/RG/project_base/cmake-build-debug
+-- Found ASSIMP: /usr/lib/x86_64-linux-gnu/libassimp.so
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/mateja/Documents/RG/project_base/cmake-build-debug
