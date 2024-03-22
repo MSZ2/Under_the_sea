@@ -1,4 +1,4 @@
-# Install script for directory: /home/mateja/Documents/RG/project_base/libs/glad
+# Install script for directory: /home/mateja/Documents/RG/Under_the_sea/libs/glad
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
