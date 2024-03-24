@@ -74,14 +74,21 @@ struct ProgramState {
     bool CameraMouseMovementUpdateEnabled = true;
 
     glm::vec3 uglyFishPosition = glm::vec3(70.f, 60, -250);
-    float uglyFishScale = 1.5f;
+    float uglyFishScale = 2.0f;
 
-    glm::vec3 uglyRockPosition = glm::vec3(0, -670, 0);
+    glm::vec3 uglyRockPosition = glm::vec3(0, -630, 0);
     float uglyRockScale = 100.0f;
 
 
-    glm::vec3 sandPosition = glm::vec3(0.0f);
-    float sandScale = 200.0f;
+    glm::vec3 sandPosition = glm::vec3(305.0f,5,315);
+    float sandScale = 500.0f;
+
+    glm::vec3 submarinePosition = glm::vec3(300.0f, 470.f, 600);
+    float submarineScale = 3.0f;
+
+    glm::vec3 rocksPosition = glm::vec3(0, 25, 25);
+    float rocksScale = 100.0f;
+
 
     PointLight pointLight;
     DirLight dirLight;
@@ -202,6 +209,13 @@ int main() {
 
     Model sandModel("resources/objects/sand/uploads_files_3835558_desert.obj");
     sandModel.SetShaderTextureNamePrefix("material.");
+    //stbi_set_flip_vertically_on_load(false);
+    Model submarineModel("resources/objects/submarine/submarine.obj");
+    submarineModel.SetShaderTextureNamePrefix("material.");
+
+    Model rocksModel("resources/objects/RockSet/RockSet.obj");
+    rocksModel.SetShaderTextureNamePrefix("material.");
+
 
     // Diving mask
     float transparentVertices[] = {
@@ -277,6 +291,8 @@ int main() {
             1.0f, -1.0f,  1.0f
     };
 
+
+
     unsigned int skyboxVAO, skyboxVBO;
     glGenVertexArrays(1, &skyboxVAO);
     glGenBuffers(1, &skyboxVBO);
@@ -285,6 +301,8 @@ int main() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+
 
 
     vector<std::string> faces {
@@ -302,12 +320,12 @@ int main() {
     skyboxShader.setInt("skybox", 0);
 
     PointLight& pointLight = programState->pointLight;
-    pointLight.position = glm::vec3(20.0f, 20.0f, 20.0f);
-    pointLight.ambient = glm::vec3(30, 30, 30);
-    pointLight.diffuse = glm::vec3(0.6, 0.6, 0.6);
+    pointLight.position = glm::vec3(241.0f, 597.0f, -17.0f);
+    pointLight.ambient = glm::vec3(20, 12, 0);
+    pointLight.diffuse = glm::vec3(0.9, 0.9, 0.9);
     pointLight.specular = glm::vec3(1.0, 1.0, 1.0);
 
-    pointLight.constant = 1.0f;
+    pointLight.constant = 5.0f;
     pointLight.linear = 0.09f;
     pointLight.quadratic = 0.032f;
 
@@ -318,6 +336,15 @@ int main() {
     dirLight.diffuse = glm::vec3( 0.2f);
     dirLight.specular = glm::vec3(0.2f);
 
+
+    glm::vec3 rocksPositions[] = {
+            glm::vec3( 120.0f,  -1.2f,  93.0f),
+            glm::vec3( -85.0f, -1.2f, -82.0f),
+            glm::vec3(-12.0f,  -1.2f, 55.0f),
+            glm::vec3( -80.0f,  -1.2f, 85.0f),
+            glm::vec3( 75.0f,  -1.2f, 20.0f),
+            glm::vec3( 25.0f,  -1.2f, -20.0f)
+    };
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -333,7 +360,7 @@ int main() {
 
         // input
         // -----
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         processInput(window);
 
@@ -363,7 +390,7 @@ int main() {
 
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
-                                                (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 2000.0f);
+                                                (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 150000.0f);
         glm::mat4 view = programState->camera.GetViewMatrix();
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
@@ -378,7 +405,7 @@ int main() {
         if(fishJump) {
 
             if (k <360 and napred == true){
-                k+=10;
+                k+=15;
             }else if(napred == false and k > 0){
                 k-=3;
             }
@@ -418,7 +445,26 @@ int main() {
         ourShader.setMat4("model", sandM);
         sandModel.Draw(ourShader);
 
-
+        //submarine
+        glm::mat4 submarineM = glm::mat4(1.0f);
+        submarineM = glm::translate(submarineM,
+                               programState->submarinePosition); // translate it down so it's at the center of the scene
+        submarineM = glm::scale(submarineM, glm::vec3(programState->submarineScale));    // it's a bit too big for our scene, so scale it down
+        ourShader.setMat4("model", submarineM);
+        submarineModel.Draw(ourShader);
+        //rocks
+        float uglovi[6] = {-12, -29, 45, 56, 87, 45};
+        glm::mat4 rocksM = glm::mat4(1.0f);
+        for(unsigned int i=0; i<6; i++) {
+            rocksM = glm::mat4(1.0f);
+            rocksM = glm::rotate(rocksM, uglovi[i], glm::vec3(0.0f,1.0f,0.0f));
+            rocksM = glm::translate(rocksM,
+                                    glm::vec3(20, 1, 20)*rocksPositions[i]); // translate it down so it's at the center of the scene
+            rocksM = glm::scale(rocksM, glm::vec3(
+                    programState->rocksScale));    // it's a bit too big for our scene, so scale it down
+            ourShader.setMat4("model", rocksM);
+            rocksModel.Draw(ourShader);
+        }
 
         // Dive mask
         glm::mat4 model = glm::mat4(1.0f);
@@ -426,7 +472,7 @@ int main() {
         if(diveMaskActive) {
             cameraShader.use();
             projection = glm::perspective(glm::radians(programState->camera.Zoom),
-                                          (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 2000.0f);
+                                          (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 5000.0f);
             model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(-1.0f,0.0f,-0.5));
             model = glm::scale(model, glm::vec3(2.0f));
@@ -487,13 +533,18 @@ void processInput(GLFWwindow *window) {
         glfwSetWindowShouldClose(window, true);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(FORWARD, 0.4f);
+        programState->camera.ProcessKeyboard(FORWARD, 0.7f);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(BACKWARD, 0.4f);
+        programState->camera.ProcessKeyboard(BACKWARD, 0.7f);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(LEFT, 0.4f);
+        programState->camera.ProcessKeyboard(LEFT, 0.7f);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(RIGHT, 0.4f);
+        programState->camera.ProcessKeyboard(RIGHT, 0.7f);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        programState->camera.ProcessKeyboard(UP, 0.7f);
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        programState->camera.ProcessKeyboard(DOWN, 0.7f);
+
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
