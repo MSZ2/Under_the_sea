@@ -83,11 +83,19 @@ struct ProgramState {
     glm::vec3 sandPosition = glm::vec3(305.0f,5,315);
     float sandScale = 500.0f;
 
-    glm::vec3 submarinePosition = glm::vec3(300.0f, 470.f, 600);
-    float submarineScale = 3.0f;
+    glm::vec3 submarinePosition = glm::vec3(300.0f, 1470.f, 600);
+    float submarineScale = 10.0f;
 
     glm::vec3 rocksPosition = glm::vec3(0, 25, 25);
     float rocksScale = 100.0f;
+
+    glm::vec3 blueFishPosition = glm::vec3(360, 300, 260);
+    float blueFishScale = 100.0f;
+
+
+
+
+
 
 
     PointLight pointLight;
@@ -216,6 +224,28 @@ int main() {
     Model rocksModel("resources/objects/RockSet/RockSet.obj");
     rocksModel.SetShaderTextureNamePrefix("material.");
 
+    Model blueFishModel("resources/objects/Blue_fish/Coral_Beauty_Angelfish_v1_L3.123ca9f8106d-73bb-4428-9416-4a734455026d/13009_Coral_Beauty_Angelfish_v1_l3.obj");
+    blueFishModel.SetShaderTextureNamePrefix("material.");
+
+    //fish Model
+   std::vector<Model> fishModels;
+    for (int i= 1; i<10; i++){
+        string path = "resources/objects/tropical_fish/TropicalFish";// +num + obj
+        Model tmp(path + "0" + to_string(i) + ".obj");
+
+        fishModels.push_back(tmp);
+    }
+    for (int i= 10; i<16; i++){
+        string path = "resources/objects/tropical_fish/TropicalFish";// +num + obj
+        Model tmp(path + to_string(i)+".obj");
+        fishModels.push_back(tmp);
+    }
+    for(int i=0; i<15; i++){
+        fishModels[i].SetShaderTextureNamePrefix("material.");
+    }
+
+
+
 
     // Diving mask
     float transparentVertices[] = {
@@ -338,12 +368,30 @@ int main() {
 
 
     glm::vec3 rocksPositions[] = {
-            glm::vec3( 120.0f,  -1.2f,  93.0f),
-            glm::vec3( -85.0f, -1.2f, -82.0f),
-            glm::vec3(-12.0f,  -1.2f, 55.0f),
-            glm::vec3( -80.0f,  -1.2f, 85.0f),
-            glm::vec3( 75.0f,  -1.2f, 20.0f),
-            glm::vec3( 25.0f,  -1.2f, -20.0f)
+            glm::vec3( 120.0f,  10,  93.0f),
+            glm::vec3( -85.0f, 10, -82.0f),
+            glm::vec3(-12.0f,  10, 55.0f),
+            glm::vec3( -80.0f,  10, 85.0f),
+            glm::vec3( 75.0f,  10, 20.0f),
+            glm::vec3( 25.0f,  10, -20.0f)
+    };
+
+    glm::vec3 fishPosition[] = {
+            glm::vec3 (45,28,94),
+            glm::vec3 (94,38,94),
+            glm::vec3 (23,95,246),
+            glm::vec3 (-45,54,123),
+            glm::vec3 (-45,54,-123),
+            glm::vec3 (-124,98,250),
+            glm::vec3 (289,54,1-29),
+            glm::vec3 (-289,54,123),
+            glm::vec3 (-89,154,123),
+            glm::vec3 (356,84,22),
+            glm::vec3 (-350,74,123),
+            glm::vec3 (-212,87,321),
+            glm::vec3 (-98,254,423),
+            glm::vec3 (-45,54,817),
+            glm::vec3 (45,54,123)
     };
 
     // draw in wireframe
@@ -466,6 +514,50 @@ int main() {
             rocksModel.Draw(ourShader);
         }
 
+        // blue fish
+        glm::mat4 blueFishM = glm::mat4(1.0f);
+        blueFishM = glm::translate(blueFishM,
+                               programState->blueFishPosition); // translate it down so it's at the center of the scene
+        blueFishM = glm::scale(blueFishM, glm::vec3(programState->blueFishScale));    // it's a bit too big for our scene, so scale it down
+        blueFishM = glm::rotate(blueFishM, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        blueFishM = glm::rotate(blueFishM, glm::radians(-60.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ourShader.setMat4("model", blueFishM);
+        blueFishModel.Draw(ourShader);
+
+
+
+        //Tropical fish
+        float uglovi2[15] = {0, -29, 45, 56, 87, 45, 39, 45, -45, -64, -48, 83, 23, 47, -74};
+        glm::mat4 fishM = glm::mat4(1.0f);
+        for(unsigned int i=0; i<15; i++) {
+            fishM = glm::mat4(1.0f);
+            fishM = glm::rotate(fishM, uglovi2[i], glm::vec3(0.0f,1.0f,0.0f));
+            glm::mat4 babyTranslation = glm::rotate( glm::mat4 (1.f), uglovi2[i], glm::vec3(0.0f,1.0f,0.0f));
+            fishM = glm::translate(fishM,
+                                   glm::vec3 (10)*fishPosition[i]);
+
+            // translate it down so it's at the center of the scene
+            fishM = glm::scale(fishM, glm::vec3(
+                    0.5));    // it's a bit too big for our scene, so scale it down
+            ourShader.setMat4("model", fishM);
+            fishModels[i].Draw(ourShader);
+            fishM = glm::scale(fishM, glm::vec3(
+                    0.2));
+            for (int j=1; j<5;j++){
+                fishM *= babyTranslation;
+
+
+                ourShader.setMat4("model", fishM);
+                fishModels[i].Draw(ourShader);
+
+            }
+
+
+        }
+
+
+
+
         // Dive mask
         glm::mat4 model = glm::mat4(1.0f);
 
@@ -487,6 +579,7 @@ int main() {
             glDrawArrays(GL_TRIANGLES, 0, 6);
             glDisable(GL_CULL_FACE);
         }
+        //
 
         // skybox
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -544,6 +637,9 @@ void processInput(GLFWwindow *window) {
         programState->camera.ProcessKeyboard(UP, 0.7f);
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         programState->camera.ProcessKeyboard(DOWN, 0.7f);
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+        //programState->CameraMouseMovementUpdateEnabled = !programState->CameraMouseMovementUpdateEnabled ;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 }
 
@@ -619,7 +715,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
         programState->ImGuiEnabled = !programState->ImGuiEnabled;
         if (programState->ImGuiEnabled) {
-            programState->CameraMouseMovementUpdateEnabled = false;
+            //programState->CameraMouseMovementUpdateEnabled = false;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         } else {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

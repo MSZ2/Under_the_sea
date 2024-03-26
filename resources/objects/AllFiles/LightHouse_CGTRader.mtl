@@ -1,0 +1,83 @@
+# Blender MTL File: 'LightHouse_CGTRader.blend'
+# Material Count: 7
+
+newmtl Body_Simple
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Ns Asphalt014_4K_Roughness.jpg
+
+newmtl Metal_Blue
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump PaintedMetal002_2K_Normal.jpg
+map_Kd PaintedMetal002_2K_Color.jpg
+map_Ns PaintedMetal002_2K_Roughness.jpg
+refl PaintedMetal002_2K_Color.jpg
+
+newmtl Wood2
+Ns 820.041346
+Ka 1.000000 1.000000 1.000000
+Kd 0.710554 0.710554 0.710554
+Ks 1.000000 1.000000 1.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 3
+map_Bump WoodSiding009_2K_Normal.jpg
+map_Ns WoodSiding009_2K_Roughness.jpg
+refl WoodSiding009_2K_Metalness.jpg
+
+newmtl bODY_bLACK
+Ns 299.919407
+Ka 1.000000 1.000000 1.000000
+Kd 0.021317 0.021317 0.021317
+Ks 1.000000 1.000000 1.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 3
+
+newmtl bULB
+Ns 323.999994
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl gLASS_tRANSPERANT
+Ns 323.999994
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl wOOD1
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump Wood065_2K_Normal.jpg
+map_Kd Wood065_2K_Color.jpg
+map_Ns Wood065_2K_Roughness.jpg
