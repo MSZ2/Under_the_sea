@@ -16,6 +16,8 @@
 
 #include <iostream>
 
+#define NUM_FISH 7
+
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
@@ -35,6 +37,11 @@ bool napred = true;
 bool fishJump = false;
 glm::vec3 pomeraj= glm::vec3 (k*-0.22198,0,k*0.975150);
 
+
+//random fish
+float rx[NUM_FISH];
+float ry[NUM_FISH];
+float rz[NUM_FISH];
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -179,6 +186,13 @@ int main() {
 
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
     stbi_set_flip_vertically_on_load(true);
+
+    std::srand(213);
+    for(int i= 0; i<NUM_FISH; i++){
+        rx[i] = -100 + std::rand()%400;
+        ry[i]= -15 + std::rand()%30;
+        rz[i]= -200 + std::rand()%400;
+    }
 
     programState = new ProgramState;
     programState->LoadFromFile("resources/program_state.txt");
@@ -527,12 +541,15 @@ int main() {
 
 
         //Tropical fish
-        float uglovi2[15] = {0, -29, 45, 56, 87, 45, 39, 45, -45, -64, -48, 83, 23, 47, -74};
-        glm::mat4 fishM = glm::mat4(1.0f);
+        float uglovi2[15] = {0, 30, 45, 56, 87, 45, 39, 45, -45, -64, -48, 83, 23, 47, -74};
+
         for(unsigned int i=0; i<15; i++) {
-            fishM = glm::mat4(1.0f);
-            fishM = glm::rotate(fishM, uglovi2[i], glm::vec3(0.0f,1.0f,0.0f));
-            glm::mat4 babyTranslation = glm::rotate( glm::mat4 (1.f), uglovi2[i], glm::vec3(0.0f,1.0f,0.0f));
+            glm::mat4 fishM = glm::mat4(1.0f);
+
+
+            glm::mat4 rotationMatrix = glm::rotate( glm::mat4 (1.f), uglovi2[i], glm::vec3(0.0f,1.0f,0.0f));
+
+            fishM *= rotationMatrix;
             fishM = glm::translate(fishM,
                                    glm::vec3 (10)*fishPosition[i]);
 
@@ -542,9 +559,11 @@ int main() {
             ourShader.setMat4("model", fishM);
             fishModels[i].Draw(ourShader);
             fishM = glm::scale(fishM, glm::vec3(
-                    0.2));
-            for (int j=1; j<5;j++){
-                fishM *= babyTranslation;
+                    0.3));
+
+            for (int j=1; j<NUM_FISH;j++){
+
+                fishM = glm::translate(fishM, glm::vec3 (-15,1, -25)*glm::vec3(rx[j],ry[j],rz[j]));
 
 
                 ourShader.setMat4("model", fishM);
