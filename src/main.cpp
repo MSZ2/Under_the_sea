@@ -37,11 +37,15 @@ bool napred = true;
 bool fishJump = false;
 glm::vec3 pomeraj= glm::vec3 (k*-0.22198,0,k*0.975150);
 
+//glm::vec4 angledDirection;
+
 
 //random fish
 float rx[NUM_FISH];
 float ry[NUM_FISH];
 float rz[NUM_FISH];
+float fishAngle = 0;//pokret ribe
+int  fishAngleDirection = 1;
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -187,11 +191,11 @@ int main() {
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
     stbi_set_flip_vertically_on_load(true);
 
-    std::srand(213);
+    std::srand(56);
     for(int i= 0; i<NUM_FISH; i++){
-        rx[i] = -100 + std::rand()%400;
+        rx[i] = -100 + std::rand()%200;
         ry[i]= -15 + std::rand()%30;
-        rz[i]= -200 + std::rand()%400;
+        rz[i]= 200 + std::rand()%400;
     }
 
     programState = new ProgramState;
@@ -529,7 +533,7 @@ int main() {
         }
 
         // blue fish
-        glm::mat4 blueFishM = glm::mat4(1.0f);
+       /* glm::mat4 blueFishM = glm::mat4(1.0f);
         blueFishM = glm::translate(blueFishM,
                                programState->blueFishPosition); // translate it down so it's at the center of the scene
         blueFishM = glm::scale(blueFishM, glm::vec3(programState->blueFishScale));    // it's a bit too big for our scene, so scale it down
@@ -537,39 +541,91 @@ int main() {
         blueFishM = glm::rotate(blueFishM, glm::radians(-60.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         ourShader.setMat4("model", blueFishM);
         blueFishModel.Draw(ourShader);
-
+    */
 
 
         //Tropical fish
-        float uglovi2[15] = {0, 30, 45, 56, 87, 45, 39, 45, -45, -64, -48, 83, 23, 47, -74};
+        float uglovi2[15] = {0, 180, 45, 56, 87, 45, 39, 45, -45, -64, -48, 83, 23, 47, -74};
+
 
         for(unsigned int i=0; i<15; i++) {
+
+
             glm::mat4 fishM = glm::mat4(1.0f);
+            fishM = glm::scale(fishM, glm::vec3(0.5));
+
+            glm::mat4 selfrotationMatrix = glm::rotate( glm::mat4 (1.f), uglovi2[i], glm::vec3(0.0f,1.0f,0.0f));
+
+            //Fish group movement
+
+            /*glm::vec3 rotationCenter = glm::vec3(10)*fishPosition[i] + glm::vec3(15) * glm::vec3(.978510,0, 0.206201);
+            glm::mat4 translateToOrigin = glm::translate(glm::mat4(1.0f), -rotationCenter);
+            glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), (float) (currentFrame*0.3), glm::vec3(0.0f, 1.0f, 0.0f));
+            glm::mat4 translateBack = glm::translate(glm::mat4(1.0f), rotationCenter);*/
+
+            //fishM =   translateBack * rotationMatrix * translateToOrigin;
+
+            glm::vec4 angledDirection = glm::normalize(selfrotationMatrix*glm::vec4(0,0,1,0));
+            //fishM = glm::scale(fishM, glm::vec3(.5));
 
 
-            glm::mat4 rotationMatrix = glm::rotate( glm::mat4 (1.f), uglovi2[i], glm::vec3(0.0f,1.0f,0.0f));
 
-            fishM *= rotationMatrix;
-            fishM = glm::translate(fishM,
-                                   glm::vec3 (10)*fishPosition[i]);
+            fishM = glm::translate(fishM, glm::vec3(10)*fishPosition[i] + glm::vec3(150*currentFrame)*glm::vec3( angledDirection[0],0, angledDirection[2] ));
+
+            fishM *= selfrotationMatrix;
+
+
+
+
+
+
 
             // translate it down so it's at the center of the scene
-            fishM = glm::scale(fishM, glm::vec3(
-                    0.5));    // it's a bit too big for our scene, so scale it down
+               // it's a bit too big for our scene, so scale it down
             ourShader.setMat4("model", fishM);
             fishModels[i].Draw(ourShader);
             fishM = glm::scale(fishM, glm::vec3(
                     0.3));
 
+
+
+            if (fishAngle<0.8 and fishAngleDirection ==1){
+                fishAngle+=0.004;
+            }
+            if (fishAngle>=0.8 and fishAngleDirection== 1){
+                fishAngleDirection = -1;
+                fishAngle = 0.776;
+
+            }
+           if (fishAngleDirection == -1 and fishAngle> -1){
+                fishAngle-=0.004;
+            }
+            if (fishAngle<=-0.8 and fishAngleDirection== -1){
+                fishAngleDirection = 1;
+                fishAngle = - 0.776;
+            }
+
+
+            glm::mat4 tmpFishM = fishM;
+
+
             for (int j=1; j<NUM_FISH;j++){
 
-                fishM = glm::translate(fishM, glm::vec3 (-15,1, -25)*glm::vec3(rx[j],ry[j],rz[j]));
+                fishM = tmpFishM;
+
+
+
+                fishM = glm::translate(fishM, glm::vec3 (8,1, -10)*glm::vec3(rx[j],ry[j],rz[j]));
+                fishM = glm::rotate( fishM, fishAngle, glm::vec3(0.0f,1.0f,0.0f));
+
+
 
 
                 ourShader.setMat4("model", fishM);
                 fishModels[i].Draw(ourShader);
 
             }
+
 
 
         }
@@ -656,10 +712,11 @@ void processInput(GLFWwindow *window) {
         programState->camera.ProcessKeyboard(UP, 0.7f);
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         programState->camera.ProcessKeyboard(DOWN, 0.7f);
-    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
         //programState->CameraMouseMovementUpdateEnabled = !programState->CameraMouseMovementUpdateEnabled ;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
+        //std::cout << angledDirection[0]<< " " << angledDirection[1]<< " "<< angledDirection[2] << std::endl;
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
