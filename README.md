@@ -39,7 +39,11 @@ Projekat iz predmeta Računarska Grafika na Matematičkom fakultetu, Univerzitet
 <br>
 
 # Uputstvo
+<<<<<<< HEAD
 1. `https://github.com/MSZ2/Under_the_sea.git`
+=======
+1. `git clone https://github.com/MSZ@/Under_the_Sea.git`
+>>>>>>> 1db9875968ebd7770b47342e259367d143047122
 2. Main se nalazi u src/main.cpp
 3. Cpp fajlovi idu u src folder
 4. Zaglavlja (h i hpp) fajlovi idu u include
@@ -47,7 +51,7 @@ Projekat iz predmeta Računarska Grafika na Matematičkom fakultetu, Univerzitet
 
 
 #  modeli
-- [Turbosquid](https://www.turbosquid.com/3d-models/piper-pa-18-supercub-fbx-free/1041070)
+- [Turbosquid](https://www.turbosquid.com)
 - [FreeModels 123](123free3dmodels.com)
 - [Texture Scan](https://www.texturecan.com)
 - [Archive 3d](archive3d.net)
