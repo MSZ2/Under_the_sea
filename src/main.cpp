@@ -258,6 +258,8 @@ int main() {
     Model blueFishModel("resources/objects/Blue_fish/Coral_Beauty_Angelfish_v1_L3.123ca9f8106d-73bb-4428-9416-4a734455026d/13009_Coral_Beauty_Angelfish_v1_l3.obj");
     blueFishModel.SetShaderTextureNamePrefix("material.");
 
+
+
     //fish Model
    std::vector<Model> fishModels;
     for (int i= 1; i<10; i++){
@@ -274,6 +276,15 @@ int main() {
     for(int i=0; i<15; i++){
         fishModels[i].SetShaderTextureNamePrefix("material.");
     }
+
+   /* std::vector<Model> coralModels;
+    for (int i= 1; i<4; i++){
+        string path = "resources/objects/RS04_Annella_mollis_Giant_Sea_Fan_OBJ/RS04v";// +num + obj
+        Model tmp(path + to_string(i) + ".obj");
+
+        coralModels.push_back(tmp);
+        coralModels[i].SetShaderTextureNamePrefix("material.");
+    }*/
 
 
 
@@ -661,7 +672,7 @@ int main() {
 
 
 
-            fishM = glm::translate(fishM, glm::vec3(10)*fishPosition[i] + glm::vec3(150*currentFrame)*glm::vec3( angledDirection[0],0, angledDirection[2] ));
+            fishM = glm::translate(fishM, glm::vec3(10)*fishPosition[i] + glm::vec3(int (150*currentFrame)%5000)*glm::vec3( angledDirection[0],0, angledDirection[2] ));
 
             fishM *= selfrotationMatrix;
 
@@ -720,6 +731,28 @@ int main() {
 
 
         }
+        //corals
+        /*glm::mat4 coralsM = glm::mat4(1.0f);
+        for(int i=0; i<50; i++) {
+            coralsM = glm::mat4(1.0f);
+            coralsM = glm::scale(coralsM, glm::vec3(
+                    40));
+            coralsM = glm::translate(coralsM,
+                                    glm::vec3(50*i ,3 , 20*i));// translate it down so it's at the center of the scene
+
+                                    // it's a bit too big for our scene, so scale it down
+
+            ourShader.setMat4("model", coralsM);
+            coralModels[i%3].Draw(ourShader);
+
+            coralsM = glm::translate(coralsM,
+                                     glm::vec3(20*i , 3, 50*i));
+
+            ourShader.setMat4("model", coralsM);
+            coralModels[i%3 ].Draw(ourShader);
+        }*/
+
+
 
 
 
@@ -822,21 +855,22 @@ int main() {
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window) {
+    deltaTime = 2.f;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(FORWARD, 0.7f);
+        programState->camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(BACKWARD, 0.7f);
+        programState->camera.ProcessKeyboard(BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(LEFT, 0.7f);
+        programState->camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(RIGHT, 0.7f);
+        programState->camera.ProcessKeyboard(RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(UP, 0.7f);
+        programState->camera.ProcessKeyboard(UP, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        programState->camera.ProcessKeyboard(DOWN, 0.7f);
+        programState->camera.ProcessKeyboard(DOWN, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
         //programState->CameraMouseMovementUpdateEnabled = !programState->CameraMouseMovementUpdateEnabled ;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
